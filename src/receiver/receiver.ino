@@ -23,7 +23,7 @@ void loop() {
 
   if (pulso) {
     digitalWrite(RELE, HIGH);
-    delay(1000);
+    delay(800);
     digitalWrite(RELE, LOW);
   }
 

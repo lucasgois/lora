@@ -5,6 +5,8 @@
 
 bool bloqueado = false;
 
+int watchdog = 2;
+
 void setup() {
   pinMode(PINO, INPUT_PULLUP);
 
@@ -13,31 +15,37 @@ void setup() {
   Heltec.display->init();
   Heltec.display->setFont(ArialMT_Plain_10);
 
-  tela("SEGURSAT");
+  tela("SEGURSAT TECH");
 }
 
 void loop() {
+
+  if (watchdog > 0) {
+    watchdog--;
+
+  } else {
+    tela("SEGURSAT TECH");
+  }
+
+  String texto = receber();
+
+  if (!texto.isEmpty()) {
+    tela(texto);
+
+  } else {
+    texto = Serial.readString();
+
+    if (!texto.isEmpty()) {
+      tela(texto);
+    }
+  }
+
   int leitura = digitalRead(PINO);
 
   // tela(String(leitura));
 
   if (leitura) {
-    // standby
     bloqueado = false;
-
-    String texto = receber();
-
-    if (!texto.isEmpty()) {
-      tela(texto);
-    } else {
-
-      texto = Serial.readString();
-
-      if (!texto.isEmpty()) {
-        tela(texto);
-      }
-    }
-
 
   } else {
 
@@ -59,6 +67,8 @@ void tela(String mensagem) {
   Heltec.display->clear();
   Heltec.display->drawString(0, 16, mensagem);
   Heltec.display->display();
+
+  watchdog = 2;
 }
 
 void enviar(String texto) {
