@@ -5,8 +5,6 @@
 
 bool bloqueado = false;
 
-int watchdog = 2;
-
 void setup() {
   pinMode(PINO, INPUT_PULLUP);
 
@@ -19,25 +17,10 @@ void setup() {
 }
 
 void loop() {
+  String textoRecebido = receber();
 
-  if (watchdog > 0) {
-    watchdog--;
-
-  } else {
-    tela("SEGURSAT TECH");
-  }
-
-  String texto = receber();
-
-  if (!texto.isEmpty()) {
-    tela(texto);
-
-  } else {
-    texto = Serial.readString();
-
-    if (!texto.isEmpty()) {
-      tela(texto);
-    }
+  if (!textoRecebido.isEmpty()) {
+    tela(textoRecebido);
   }
 
   int leitura = digitalRead(PINO);
@@ -62,13 +45,12 @@ void loop() {
 }
 
 void tela(String mensagem) {
+  Serial.print("tela: ");
   Serial.println(mensagem);
 
   Heltec.display->clear();
   Heltec.display->drawString(0, 16, mensagem);
   Heltec.display->display();
-
-  watchdog = 2;
 }
 
 void enviar(String texto) {
@@ -82,29 +64,28 @@ void enviar(String texto) {
   piscar();
 }
 
-
 String receber() {
-  String texto = "";
+  String textoRecebido = "";
 
   int packetSize = LoRa.parsePacket();
 
   if (packetSize) {
 
     while (LoRa.available()) {
-      texto = "";
+      textoRecebido = "";
 
       for (int i = 0; i < packetSize; i++) {
-        texto += (char)LoRa.read();
+        textoRecebido += (char)LoRa.read();
       }
     }
 
     Serial.print("receber: ");
-    Serial.println(texto);
+    Serial.println(textoRecebido);
 
     piscar();
   }
 
-  return texto;
+  return textoRecebido;
 }
 
 void piscar() {

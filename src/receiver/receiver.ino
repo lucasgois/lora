@@ -27,7 +27,11 @@ void loop() {
     digitalWrite(RELE, LOW);
   }
 
-  enviar("Comando executado");
+  enviar("OK");
+
+  delay(2000);
+
+  enviar("SEGURSAT TECH");
 }
 
 void enviar(String texto) {
